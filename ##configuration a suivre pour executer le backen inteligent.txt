@@ -1,0 +1,8 @@
+##configuration a suivre pour executer le sbackend inteligent
+installer ollama, que je mis le setup dans le dossier principale,
+fermer ça console de saisi
+depuis votre pc ouvre un bach et taper la commande : ollama run gemma:2b   ## pour installer le model gemma 2B
+
+après l'installation a 100% taper la commande /bye  ## pour laisser le serveru ollama s'executer en arriere plan
+
+#après cela executer maintenant le serveur backend garis_app.js qui est le backend inteligent, ou logique_statique.js

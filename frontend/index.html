@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI INT | Assistant IA Full-Stack</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">  
+</head>
+<body>
+    <div class="main-container"> 
+        
+        <div class="sidebar">
+            
+            <div class="logo-area">
+                <img src="garis_vert.png" alt="Logo Garis Dev" class="logo-img">
+                <p class="app-title">AI INT</p>
+            </div>
+            
+            <button id="new-chat-btn" class="new-chat-button">+ Nouvelle Conversation</button>
+            <h2 class="sidebar-title">Historique</h2>
+            <div id="session-history" class="session-history-list">
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="https://my-garis-web.web.app/" target="_blank" class="ref-link">
+                    Référence Web (Dev en cours) ↗
+                </a>
+                <p class="copyright">© 2025 Garis Dev</p>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            
+            <header class="chat-header">
+                <h1>Assistant IA Full-Stack <span class="ai-icon">🤖</span></h1>
+                <p>Propulsé par <span class="tech-stack">Node.js, SQLite & Ollama/Gemma</span></p>
+            </header>
+            
+            <div class="chat-history" id="chat-history">
+                <p class="welcome-message">
+                    Bienvenue dans AI INT, votre assistant IA de développement. Posez-moi des questions complexes sur votre projet ou sur la programmation !
+                </p>
+            </div>
+
+            <form id="chat-form" class="chat-input-form">
+                <input type="text" id="user-message" placeholder="Tapez votre message..." required disabled>
+                <button type="submit" id="send-btn" disabled>Envoyer</button>
+            </form>
+        </div>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatHistory = document.getElementById('chat-history');
+            const sessionHistoryList = document.getElementById('session-history');
+            const chatForm = document.getElementById('chat-form');
+            const userMessageInput = document.getElementById('user-message');
+            const newChatBtn = document.getElementById('new-chat-btn');
+            const sendBtn = document.getElementById('send-btn');
+            
+            // NOTE : L'URL devra être changée lors du déploiement sur le VPS !
+            const API_URL = 'http://localhost:3000/api'; 
+            let currentSessionId = null; 
+
+            // --- Fonctions d'Utilité ---
+
+            function generateUniqueId() {
+                return 'chat_' + Date.now();
+            }
+
+            function displayMessage(role, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', role);
+                
+                // Utilisation de spans pour un meilleur ciblage CSS
+                const sender = role === 'user' ? 'Vous' : 'AI INT';
+                messageDiv.innerHTML = `<span class="sender-label">${sender}</span><span class="message-content">${content}</span>`;
+                
+                chatHistory.appendChild(messageDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+
+            // --- Gestion des Sessions (Le code est inchangé) ---
+
+            function startNewChat() {
+                currentSessionId = generateUniqueId();
+                chatHistory.innerHTML = '<p class="welcome-message">Nouvelle conversation démarrée. Posez votre première question !</p>'; 
+                userMessageInput.disabled = false;
+                sendBtn.disabled = false;
+                userMessageInput.focus();
+                loadSessions(); 
+            }
+
+            function loadChat(sessionId) {
+                currentSessionId = sessionId;
+                chatHistory.innerHTML = ''; 
+                userMessageInput.disabled = false;
+                sendBtn.disabled = false;
+                userMessageInput.focus();
+
+                document.querySelectorAll('.session-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.session === sessionId) {
+                        item.classList.add('active');
+                    }
+                });
+
+                fetch(`${API_URL}/session/${sessionId}`)
+                    .then(res => res.json())
+                    .then(messages => {
+                        messages.forEach(msg => displayMessage(msg.role, msg.content));
+                    })
+                    .catch(error => console.error('Erreur chargement chat:', error));
+            }
+
+            function loadSessions() {
+                fetch(`${API_URL}/sessions`)
+                    .then(res => res.json())
+                    .then(sessions => {
+                        sessionHistoryList.innerHTML = ''; 
+                        
+                        sessions.forEach(session => {
+                            const item = document.createElement('div');
+                            item.classList.add('session-item');
+                            item.dataset.session = session.session_id;
+                            // Limiter la longueur du titre
+                            const titleText = session.title ? session.title : `Nouvelle conversation...`;
+                            item.textContent = titleText.length > 30 ? titleText.substring(0, 30) + '...' : titleText;
+                            
+                            if (session.session_id === currentSessionId) {
+                                item.classList.add('active');
+                            }
+
+                            item.addEventListener('click', () => loadChat(session.session_id));
+                            sessionHistoryList.appendChild(item);
+                        });
+                        
+                        if (!currentSessionId && sessions.length > 0) {
+                            loadChat(sessions[0].session_id);
+                        } else if (!currentSessionId && sessions.length === 0) {
+                            // On démarre un nouveau chat si la DB est vide au lancement
+                            startNewChat(); 
+                        }
+
+                    })
+                    .catch(error => console.error('Erreur chargement sessions:', error));
+            }
+
+            // --- Événements (Le code est inchangé) ---
+
+            newChatBtn.addEventListener('click', startNewChat);
+
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const userMessage = userMessageInput.value.trim();
+                
+                if (!userMessage || !currentSessionId) return;
+
+                displayMessage('user', userMessage);
+                userMessageInput.value = '';
+
+                // Désactiver l'input pendant la réponse
+                userMessageInput.disabled = true;
+                sendBtn.disabled = true;
+
+                fetch(`${API_URL}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage, sessionId: currentSessionId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    displayMessage('ai', data.response);
+                    loadSessions();
+                    userMessageInput.disabled = false;
+                    sendBtn.disabled = false;
+                    userMessageInput.focus();
+                })
+                .catch(error => {
+                    console.error('Erreur de serveur:', error);
+                    displayMessage('ai', 'Problème de connexion au serveur.');
+                    userMessageInput.disabled = false;
+                    sendBtn.disabled = false;
+                });
+            });
+
+            // Initialisation
+            loadSessions();
+        });
+    </script>
+</body>
+</html>

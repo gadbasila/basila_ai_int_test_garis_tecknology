@@ -1,0 +1,303 @@
+/* Palette :
+ * Arrière-plan : #1e1e2f (Bleu Profond/Gris Sombre)
+ * Accent/AI : #00FFFF (Cyan Électrique)
+ * Texte : #f0f0f0 (Gris Clair)
+ * Sidebar : #2a2a47 (Légèrement plus clair que le fond)
+ */
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #1e1e2f; /* Fond sombre professionnel */
+    color: #f0f0f0; /* Texte clair */
+    height: 100vh;
+    display: flex;
+    overflow: hidden; /* Cache la barre de défilement du corps */
+}
+
+/* --- Conteneurs Globaux --- */
+
+.main-container {
+    display: flex;
+    width: 100%;
+}
+
+/* --- Barre Latérale (Sidebar) --- */
+
+.sidebar {
+    width: 280px;
+    background-color: #2a2a47; /* Légèrement plus clair que le fond */
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 10;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #3c3c63; /* Ligne de séparation */
+}
+
+.logo-img {
+    width: 40px;
+    height: 40px;
+    /* Styles pour rendre le logo plus "AI" si l'image est simple */
+    border-radius: 5px; 
+    border: 2px solid #00FFFF;
+    margin-right: 10px;
+}
+
+.app-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #00FFFF; /* Couleur d'accentuation IA */
+    margin: 0;
+}
+
+.sidebar-title {
+    font-size: 1em;
+    color: #aaa;
+    margin: 15px 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.new-chat-button {
+    background-color: #00FFFF;
+    color: #1e1e2f;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px rgba(0, 255, 255, 0.3);
+}
+
+.new-chat-button:hover {
+    background-color: #00e5e5;
+    transform: translateY(-1px);
+}
+
+/* Historique des Sessions */
+.session-history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 5px; /* Pour masquer la barre de défilement */
+}
+
+.session-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: #3c3c63;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 0.15s;
+}
+
+.session-item:hover {
+    background-color: #4a4a77;
+}
+
+.session-item.active {
+    background-color: #00FFFF;
+    color: #1e1e2f;
+    font-weight: bold;
+}
+
+/* Pied de page de la Sidebar */
+.sidebar-footer {
+    padding-top: 20px;
+    border-top: 1px solid #3c3c63;
+    text-align: center;
+}
+
+.ref-link {
+    display: block;
+    color: #88f; /* Bleu plus doux pour les liens */
+    text-decoration: none;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    transition: color 0.15s;
+}
+
+.ref-link:hover {
+    color: #00FFFF;
+}
+
+.copyright {
+    font-size: 0.75em;
+    color: #777;
+}
+
+/* --- Zone de Chat Principale --- */
+
+.chat-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.chat-header {
+    padding: 20px 30px;
+    background-color: #1e1e2f;
+    border-bottom: 1px solid #3c3c63;
+    text-align: center;
+}
+
+.chat-header h1 {
+    margin: 0 0 5px 0;
+    font-size: 1.8em;
+    color: #f0f0f0;
+}
+
+.tech-stack {
+    color: #00FFFF;
+    font-weight: bold;
+}
+
+.ai-icon {
+    color: #00FFFF;
+}
+
+/* Historique des Messages */
+.chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome-message {
+    text-align: center;
+    color: #888;
+    margin-top: 40px;
+    padding: 15px;
+    border: 1px dashed #3c3c63;
+    border-radius: 8px;
+}
+
+/* Styles des Messages */
+.message {
+    max-width: 70%;
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 18px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.sender-label {
+    display: block;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.message.user {
+    align-self: flex-end;
+    background-color: #00FFFF; /* Bulles utilisateur en Cyan pour le contraste */
+    color: #1e1e2f;
+    border-bottom-right-radius: 4px; /* Petite entaille */
+}
+
+.message.user .sender-label {
+    color: #2a2a47; /* Texte sombre dans la bulle claire */
+}
+
+.message.ai {
+    align-self: flex-start;
+    background-color: #3c3c63; /* Bulles AI dans une couleur sombre secondaire */
+    color: #f0f0f0;
+    border-bottom-left-radius: 4px; /* Petite entaille */
+}
+
+.message.ai .sender-label {
+    color: #00FFFF; /* Texte AI en Cyan */
+}
+
+/* Zone de Saisie */
+
+.chat-input-form {
+    display: flex;
+    padding: 20px 30px;
+    background-color: #2a2a47;
+    border-top: 1px solid #3c3c63;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#user-message {
+    flex-grow: 1;
+    padding: 12px 15px;
+    font-size: 1em;
+    border: 1px solid #3c3c63;
+    border-radius: 25px;
+    background-color: #1e1e2f;
+    color: #f0f0f0;
+    margin-right: 15px;
+    transition: border-color 0.2s;
+}
+
+#user-message:focus {
+    outline: none;
+    border-color: #00FFFF; /* Bordure Cyan au focus */
+}
+
+#send-btn {
+    padding: 12px 25px;
+    background-color: #00FFFF;
+    color: #1e1e2f;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#send-btn:hover:not(:disabled) {
+    background-color: #00e5e5;
+}
+
+#send-btn:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+/* --- Responsive (Optionnel) --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        position: static;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .chat-area {
+        height: 100vh;
+    }
+
+    .chat-history {
+        padding: 15px;
+    }
+
+    .chat-input-form {
+        padding: 15px;
+    }
+}
